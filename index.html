@@ -1,0 +1,66 @@
+
+<html>
+ <head>
+  <meta charset="utf-8">
+  <script type="text/javascript" src="sha256.min.js"> </script>
+  <script type="text/javascript" src="ascii85.js"> </script>
+  <style type="text/css">
+
+  </style>
+ </head>
+	<body>
+	<div align="middle" style="padding-top: 10%">
+	Enter your secret word
+	<br>
+	<input id="secret_word" type="password" value="" style="font-size:35px">
+	<br>
+	Enter the name of the service (case-insensitive)
+	<br>
+	<input id="service" type="text" value="" style="font-size:35px">
+	<br>
+    <input type="button" onClick="main()" value="Generate" style="font-size:35px">
+
+    <div>
+		<p id="element_for_output" style="font-size:20px">    </p>
+		<button onclick="copy_to_clipboard(pw)"> Copy to clipboard </button>
+	</div>
+	</div>
+
+	<script>
+
+	let pw;
+	//let salt = ''; for (let i=0; i < 10000000; i++) salt+='0';
+
+	function apply_n_times(w, n) {
+		let res = '';
+		for (let i=0; i < n; i++) {
+			res = sha256(res + w);
+		}
+		return res;
+	}
+
+	function main() {
+		pw = base85.fromByteArray(
+			sha256.array(
+				apply_n_times( secret_word.value + service.value.toLowerCase(), 100000 )
+			)
+		, false);
+		
+		element_for_output.innerText = pw;
+	}
+
+	function copy_to_clipboard(text) {
+		let input = document.createElement('input');
+		input.setAttribute('value', text);
+		document.body.appendChild(input);
+		input.select();
+		input.setSelectionRange(0, 99999);
+		let result = document.execCommand('copy');
+		document.body.removeChild(input);
+	} 
+
+
+	</script>
+
+	</body>
+</html>
